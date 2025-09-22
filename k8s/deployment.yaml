@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: misguidedlogs-refine-warcraftlogs
+spec:
+  schedule: "4,9,14,19,24,29,34,39,44,49,54,59 * * * *"  # This runs every 2 Hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: misguidedlogs-refine-warcraftlogs
+            image: 192.168.0.78:32000/misguidedlogs-refine-warcraftlogs-2:latest
+            args: ["dotnet", "./app/MisguidedLogs.Refine.Warcraftlogs.dll"]  # Adjust as needed
+          restartPolicy: OnFailure

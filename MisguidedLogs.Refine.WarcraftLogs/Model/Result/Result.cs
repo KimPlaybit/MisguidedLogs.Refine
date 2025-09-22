@@ -5,7 +5,18 @@ namespace MisguidedLogs.Refine.WarcraftLogs.Model.Result;
 
 public record Zone(int Id)
 {
-    public string Name => Id is 2018 ? "Scarlet Enclave" : ""; // <--- Get name somehow ?
+    public string Name => Zones.TryGetValue(Id, out var Zone) ? Zone : ""; 
+
+    private static Dictionary<int, string> Zones = new Dictionary<int, string>
+        {
+            { 1036, "Naxxramas" },
+            { 1035, "Temple of Ahn'Qiraj" },
+            { 1031, "Ruins of Ahn'Qiraj" },
+            { 1030, "Zul'Gurub" },
+            { 1034, "Blackwing Lair" },
+            { 1029, "Onyxia" },
+            { 1028, "Molten Core" },
+        };
 }
 public record Boss(int Id, string Name, int ZoneId);
 public record Fight(string FightId, int BossId, DateTime StartTime, DateTime EndTime);
@@ -44,7 +55,6 @@ public enum TalentSpec
     Unholy,
     Hybrid
 }
-
 
 public record PlayerResults(
     Dictionary<Class, Player> Priests,

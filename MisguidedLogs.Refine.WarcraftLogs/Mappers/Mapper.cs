@@ -27,15 +27,19 @@ public class Mapper
             return y;
         }));
 
-        return [.. intro.ReportData.Reports.Data.SelectMany(x => x.Dps.Data.Where(y => y.Zone != 2510).Select(y => CreateFight(x.Code, y, fightDetails)))];
+        return [.. intro.ReportData.Reports.Data.SelectMany(x => x.Dps.Data.Where(y => y.Zone != 2510).Select(y => CreateFight(x.Code, y, fightDetails)).Where(x => x is not null))!];
     }
 
-    private static Model.Result.Fight CreateFight(string code, Model.Fight fight, IEnumerable<FightDetails> fightDetails)
+    private static Model.Result.Fight? CreateFight(string code, Model.Fight fight, IEnumerable<FightDetails> fightDetails)
     {
 
         try
         {
-            var connectedFight = fightDetails.First(x => x.Code == code && x.Id == fight.FightId);
+            var connectedFight = fightDetails.FirstOrDefault(x => x.Code == code && x.Id == fight.FightId);
+            if (connectedFight is null)
+            {
+                return null;
+            }
             return new Model.Result.Fight($"{fight.Encounter.Id}_{code}_{fight.FightId}", fight.Encounter.Id, DateTimeOffset.FromUnixTimeMilliseconds(connectedFight.CompleteStartTime).UtcDateTime, DateTimeOffset.FromUnixTimeMilliseconds(connectedFight.CompleteEndTime).UtcDateTime);
 
         }
